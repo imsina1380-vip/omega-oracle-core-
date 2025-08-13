@@ -1,0 +1,63 @@
+​==============================================================================
+
+
+​File: requirements.bot.txt
+
+
+​Version: ULTIMATE
+
+
+​==============================================================================
+
+
+​fastapi
+
+
+uvicorn[standard]
+
+
+python-telegram-bot[persistence]
+
+
+python-dotenv
+
+
+psycopg2-binary
+
+
+numpy
+
+
+pandas
+
+
+TA-Lib
+
+
+​==============================================================================
+
+
+​File: requirements.image_generator.txt
+
+
+​Version: ULTIMATE
+
+
+​==============================================================================
+
+
+​fastapi
+
+
+uvicorn
+
+
+matplotlib
+
+
+mplfinance
+
+
+​اینها کتابخانه‌هایی هستند که برای رسم چارت‌های مالی استفاده می‌شوند.
+
+
