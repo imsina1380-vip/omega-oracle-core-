@@ -1,9 +1,6 @@
 services:
   - type: pserv
     name: omega-postgres-db
-    runtime: postgres
-    postgresMajorVersion: 16
-    ipAllowList: []
     plan: free
 
   - type: web
