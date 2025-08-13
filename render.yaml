@@ -1,0 +1,48 @@
+# ==============================================================================
+# File: render.yaml
+# Version: ULTIMATE with Viz-Engine
+# Description: The Forge - نقشه ساخت نهایی برای پلتفرم Render
+# ==============================================================================
+services:
+  # بخش اول: تعریف پایگاه داده PostgreSQL (قلب سیستم)
+  - type: pserv
+    name: omega-postgres-db
+    runtime: postgres
+    postgresMajorVersion: 16
+    ipAllowList: []
+    plan: free
+
+  # بخش دوم: تعریف سرویس ربات تلگرام (رابط کاربری)
+  - type: web
+    name: omega-bot
+    runtime: docker
+    dockerfilePath: ./Dockerfile.bot # مسیر داکرفایل مخصوص ربات
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: WEBHOOK_URL
+        fromService:
+          type: web
+          name: omega-bot
+          property: url
+      - key: DB_EXTERNAL_URL
+        fromService:
+          type: pserv
+          name: omega-postgres-db
+          property: externalConnectionString
+      # آدرس سرویس تصویرساز برای فراخوانی داخلی
+      - key: IMAGE_GENERATOR_URL
+        fromService:
+          type: web
+          name: omega-image-generator
+          property: url
+
+  # بخش سوم: تعریف موتور بصری‌سازی (سرویس جدید)
+  # این سرویس، حکم اوراکل را به یک تصویر چارت تبدیل می‌کند.
+  - type: web
+    name: omega-image-generator
+    runtime: docker
+    dockerfilePath: ./Dockerfile.image_generator # مسیر داکرفایل مخصوص تصویرساز
+    plan: free
