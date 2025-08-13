@@ -1,0 +1,34 @@
+services:
+  # سرویس ۱: پایگاه داده PostgreSQL
+  - type: pserv
+    name: omega-postgres-db
+    plan: free
+
+  # سرویس ۲: ربات تلگرام
+  - type: web
+    name: omega-bot
+    runtime: docker
+    dockerfilePath: ./Dockerfile.bot
+    healthCheckPath: /
+    plan: free
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: DB_EXTERNAL_URL
+        fromService:
+          type: pserv
+          name: omega-postgres-db
+          property: connectionString
+      - key: WEBHOOK_URL
+        fromService:
+          type: web
+          name: omega-bot
+          property: url
+
+  # سرویس ۳: موتور بصری‌سازی (در این نسخه حذف شد تا خطا به صفر برسد)
+  # ما بعداً می‌توانیم این سرویس را اضافه کنیم.
+  # - type: web
+  #   name: omega-image-generator
+  #   runtime: docker
+  #   dockerfilePath: ./Dockerfile.image_generator
+  #   plan: free
