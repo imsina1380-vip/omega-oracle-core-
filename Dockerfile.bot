@@ -1,0 +1,39 @@
+# ==============================================================================
+# File: Dockerfile.bot
+# Version: ULTIMATE
+# Description: دستورالعمل ساخت کانتینر برای سرویس ربات تلگرام
+# ==============================================================================
+FROM python:3.11-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential wget libpq-dev && rm -rf /var/lib/apt/lists/*
+RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
+    tar -xzf ta-lib-0.4.0-src.tar.gz && \
+    cd ta-lib/ && ./configure --prefix=/usr && make && make install && \
+    cd .. && rm -rf ta-lib ta-lib-0.4.0-src.tar.gz
+COPY requirements.bot.txt .
+RUN pip install --no-cache-dir -r requirements.bot.txt
+COPY . .
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# ==============================================================================
+# File: Dockerfile.image_generator
+# Version: ULTIMATE
+# Description: دستورالعمل ساخت کانتینر برای موتور بصری‌سازی
+# این سرویس کتابخانه‌های سنگین گرافیکی را نصب می‌کند.
+# ==============================================================================
+FROM python:3.11-slim
+WORKDIR /app
+# نصب نیازمندی‌های سیستمی برای کتابخانه‌های گرافیکی
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+COPY requirements.image_generator.txt .
+RUN pip install --no-cache-dir -r requirements.image_generator.txt
+# کد اصلی سرویس تصویرساز در اینجا کپی می‌شود (در این نسخه مفهومی است)
+# COPY image_generator_app.py .
+EXPOSE 8000
+# CMD ["uvicorn", "image_generator_app:app", "--host", "0.0.0.0", "--port", "8000"]
